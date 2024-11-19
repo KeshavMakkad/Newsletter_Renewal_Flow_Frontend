@@ -5,27 +5,32 @@ const FlowSimulation = () => {
     const [logs, setLogs] = useState([]);
     const [isActive, setIsActive] = useState(false);
 
+    const getTimestamp = () => {
+        const now = new Date();
+        return `[${now.toLocaleTimeString()}]`;
+    };
+
     const simulation = async () => {
         try {
             setIsActive(true);
-            const logUpdates = ["Flow started"];
+            const logUpdates = [`${getTimestamp()} Flow started`];
             setLogs([...logUpdates]);
 
             const { data: flow } = await axios.post(
                 "http://localhost:3000/start"
             );
-            logUpdates.push("Initial reminder sent");
+            logUpdates.push(`${getTimestamp()} Initial reminder sent`);
             setLogs([...logUpdates]);
 
             await new Promise((resolve) => {
-                logUpdates.push("Waiting for 10 seconds");
+                logUpdates.push(`${getTimestamp()} Waiting for 10 seconds`);
                 setLogs([...logUpdates]);
                 setTimeout(resolve, 10000);
             });
 
             if (Math.random() > 0.5) {
                 logUpdates.push(
-                    "User renewed. Thank you email sent. \n Flow ended"
+                    `${getTimestamp()} User renewed. Thank you email sent. \nFlow ended`
                 );
                 await axios.put("http://localhost:3000/update", {
                     flowID: flow._id,
@@ -37,20 +42,20 @@ const FlowSimulation = () => {
                 setIsActive(false);
                 return;
             } else {
-                logUpdates.push("Subscription not renewed");
+                logUpdates.push(`${getTimestamp()} Subscription not renewed`);
             }
 
-            logUpdates.push("Second reminder sent");
+            logUpdates.push(`${getTimestamp()} Second reminder sent`);
             setLogs([...logUpdates]);
             await new Promise((resolve) => {
-                logUpdates.push("Waiting for 10 seconds");
+                logUpdates.push(`${getTimestamp()} Waiting for 10 seconds`);
                 setLogs([...logUpdates]);
                 setTimeout(resolve, 10000);
             });
 
             if (Math.random() > 0.5) {
                 logUpdates.push(
-                    "User renewed. Thank you email sent. \n Flow ended"
+                    `${getTimestamp()} User renewed. Thank you email sent. \nFlow ended`
                 );
                 await axios.put("http://localhost:3000/update", {
                     flowID: flow._id,
@@ -62,11 +67,11 @@ const FlowSimulation = () => {
                 setIsActive(false);
                 return;
             } else {
-                logUpdates.push("Subscription not renewed");
+                logUpdates.push(`${getTimestamp()} Subscription not renewed`);
                 setLogs([...logUpdates]);
             }
 
-            logUpdates.push("No further action. Flow ended.");
+            logUpdates.push(`${getTimestamp()} No further action. Flow ended.`);
             await axios.put("http://localhost:3000/update", {
                 flowID: flow._id,
                 stage: "Completed",
@@ -78,7 +83,7 @@ const FlowSimulation = () => {
         } catch (err) {
             setLogs((prevLogs) => [
                 ...prevLogs,
-                "An error occurred during the simulation.",
+                `${getTimestamp()} An error occurred during the simulation.`,
             ]);
             console.log(err);
             setIsActive(false);
