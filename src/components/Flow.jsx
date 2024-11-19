@@ -10,15 +10,16 @@ const FlowSimulation = () => {
         return `[${now.toLocaleTimeString()}]`;
     };
 
+    const BASE_URL =
+        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:3000";
+
     const simulation = async () => {
         try {
             setIsActive(true);
             const logUpdates = [`${getTimestamp()} Flow started`];
             setLogs([...logUpdates]);
 
-            const { data: flow } = await axios.post(
-                "http://localhost:3000/start"
-            );
+            const { data: flow } = await axios.post(`${BASE_URL}/start`);
             logUpdates.push(`${getTimestamp()} Initial reminder sent`);
             setLogs([...logUpdates]);
 
@@ -32,7 +33,7 @@ const FlowSimulation = () => {
                 logUpdates.push(
                     `${getTimestamp()} User renewed. Thank you email sent. \nFlow ended`
                 );
-                await axios.put("http://localhost:3000/update", {
+                await axios.put(`${BASE_URL}/update`, {
                     flowID: flow._id,
                     stage: "Completed",
                     outcome: "Renewed",
@@ -57,7 +58,7 @@ const FlowSimulation = () => {
                 logUpdates.push(
                     `${getTimestamp()} User renewed. Thank you email sent. \nFlow ended`
                 );
-                await axios.put("http://localhost:3000/update", {
+                await axios.put(`${BASE_URL}/update`, {
                     flowID: flow._id,
                     stage: "Completed",
                     outcome: "Renewed",
@@ -72,7 +73,7 @@ const FlowSimulation = () => {
             }
 
             logUpdates.push(`${getTimestamp()} No further action. Flow ended.`);
-            await axios.put("http://localhost:3000/update", {
+            await axios.put(`${BASE_URL}/update`, {
                 flowID: flow._id,
                 stage: "Completed",
                 outcome: "Not Renewed",
